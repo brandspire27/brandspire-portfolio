@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useForm } from "@formspree/react";
 
 import {
   ArrowRight,
@@ -172,8 +171,6 @@ function ContactForm() {
     import.meta.env.VITE_FORMSPREE_ID ||
     "YOUR_FORM_ID";
 
-  const [state, , reset] = useForm(formId);
-
   const [sending, setSending] =
     useState(false);
 
@@ -183,8 +180,9 @@ function ContactForm() {
   const [errorMessage, setErrorMessage] =
     useState("");
 
-  const CRM_API_URL =
-    "https://site--brandspire-crm--gnbmjcfsyzsx.code.run/api";
+  /* =========================================================
+     SUBMIT FORM
+  ========================================================= */
 
   const handleContactSubmit = async (event) => {
     event.preventDefault();
@@ -193,7 +191,8 @@ function ContactForm() {
 
     const form = event.currentTarget;
 
-    const formData = new FormData(form);
+    const formData =
+      new FormData(form);
 
     const name = String(
       formData.get("name") || ""
@@ -207,9 +206,23 @@ function ContactForm() {
       formData.get("message") || ""
     ).trim();
 
-    if (!name || !email || !message) {
+    if (
+      !name ||
+      !email ||
+      !message
+    ) {
       setErrorMessage(
         "Please fill all required fields."
+      );
+
+      return;
+    }
+
+    if (
+      formId === "YOUR_FORM_ID"
+    ) {
+      setErrorMessage(
+        "Formspree is not configured. Please add VITE_FORMSPREE_ID."
       );
 
       return;
@@ -238,13 +251,20 @@ function ContactForm() {
           }
         );
 
-      if (!formspreeResponse.ok) {
-        const formspreeData =
-          await formspreeResponse.json();
+      let formspreeData = {};
 
+      try {
+        formspreeData =
+          await formspreeResponse.json();
+      } catch {
+        formspreeData = {};
+      }
+
+      if (!formspreeResponse.ok) {
         throw new Error(
-          formspreeData?.errors?.[0]?.message ||
-            "Formspree submission failed."
+          formspreeData?.errors?.[0]
+            ?.message ||
+            "Form submission failed."
         );
       }
 
@@ -266,6 +286,7 @@ function ContactForm() {
             body: JSON.stringify({
               name,
               email,
+
               projectDetails:
                 message,
 
@@ -291,6 +312,10 @@ function ContactForm() {
         );
       }
 
+      /* =====================================================
+         SUCCESS
+      ===================================================== */
+
       form.reset();
 
       setSuccess(true);
@@ -309,9 +334,14 @@ function ContactForm() {
     }
   };
 
+  /* =========================================================
+     SUCCESS UI
+  ========================================================= */
+
   if (success) {
     return (
       <div className="form-success">
+
         <div className="success-icon">
           <Check size={28} />
         </div>
@@ -335,265 +365,19 @@ function ContactForm() {
           className="secondary-button"
           type="button"
           onClick={() => {
-            reset();
             setSuccess(false);
             setErrorMessage("");
           }}
         >
           Send another message
         </button>
-      </div>
-    );
-  }
-
-  return (
-    <form
-      className="contact-form"
-      onSubmit={handleContactSubmit}
-    >
-      <input
-        type="hidden"
-        name="subject"
-        value="New BrandSpire Project Enquiry"
-      />
-
-      <div className="field-group">
-        <label htmlFor="name">
-          Full name
-        </label>
-
-        <input
-          id="name"
-          name="name"
-          type="text"
-          placeholder="Your full name"
-          required
-        />
-      </div>
-
-      <div className="field-group">
-        <label htmlFor="email">
-          Email address
-        </label>
-
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          required
-        />
-      </div>
-
-      <div className="field-group">
-        <label htmlFor="message">
-          Project details
-        </label>
-
-        <textarea
-          id="message"
-          name="message"
-          rows="6"
-          placeholder="Tell us what you want to build, important features, expected timeline, or anything else we should know."
-          required
-        />
-      </div>
-
-      {errorMessage && (
-        <p
-          style={{
-            color: "#ef4444",
-            marginTop: "8px",
-            marginBottom: "8px",
-            fontSize: "14px",
-          }}
-        >
-          {errorMessage}
-        </p>
-      )}
-
-      <button
-        className="submit-button"
-        type="submit"
-        disabled={sending}
-      >
-        <span>
-          {sending
-            ? "Sending..."
-            : "Send message"}
-        </span>
-
-        <Send size={17} />
-      </button>
-
-      {formId === "YOUR_FORM_ID" && (
-        <p className="setup-note">
-          Developer setup: add your Formspree
-          form ID to{" "}
-          <code>
-            VITE_FORMSPREE_ID
-          </code>{" "}
-          before deploying.
-        </p>
-      )}
-    </form>
-  );
-}
-
-  /* =========================================================
-     SUBMIT CONTACT FORM
-  ========================================================= */
-
-  const handleContactSubmit = async (event) => {
-    event.preventDefault();
-
-    if (
-      state.submitting ||
-      crmSending
-    ) {
-      return;
-    }
-
-    const form = event.currentTarget;
-
-    const formData =
-      new FormData(form);
-
-    const name = String(
-      formData.get("name") || ""
-    ).trim();
-
-    const email = String(
-      formData.get("email") || ""
-    ).trim();
-
-    const message = String(
-      formData.get("message") || ""
-    ).trim();
-
-    if (
-      !name ||
-      !email ||
-      !message
-    ) {
-      setCrmError(
-        "Please fill all required fields."
-      );
-
-      return;
-    }
-
-    setCrmError("");
-    setCrmSending(true);
-
-    try {
-      /* =====================================================
-         1. SEND ENQUIRY TO CRM
-      ===================================================== */
-
-      const crmResponse = await fetch(
-        `${CRM_API_URL}/notifications/contact`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-
-          body: JSON.stringify({
-            name,
-            email,
-
-            projectDetails:
-              message,
-
-            source:
-              "BrandSpire Portfolio",
-          }),
-        }
-      );
-
-      let crmData = {};
-
-      try {
-        crmData =
-          await crmResponse.json();
-      } catch {
-        crmData = {};
-      }
-
-      if (!crmResponse.ok) {
-        throw new Error(
-          crmData?.message ||
-            "Unable to send enquiry to CRM."
-        );
-      }
-
-      /* =====================================================
-         2. SEND TO FORMSPREE
-      ===================================================== */
-
-      await handleFormspreeSubmit(event);
-    } catch (error) {
-      console.error(
-        "Contact Form Error:",
-        error
-      );
-
-      setCrmError(
-        error.message ||
-          "Something went wrong. Please try again."
-      );
-    } finally {
-      setCrmSending(false);
-    }
-  };
-
-  /* =========================================================
-     SUCCESS
-  ========================================================= */
-
-  if (state.succeeded) {
-    return (
-      <div className="form-success">
-
-        <div className="success-icon">
-          <Check size={28} />
-        </div>
-
-        <p className="eyebrow">
-          MESSAGE RECEIVED
-        </p>
-
-        <h3>
-          Thanks for reaching out.
-        </h3>
-
-        <p>
-          We’ve received your project
-          details. Our BrandSpire team will
-          review your message and get back
-          to you as soon as possible.
-        </p>
-
-        <button
-          className="secondary-button"
-          type="button"
-          onClick={() => {
-            setCrmError("");
-            reset();
-          }}
-        >
-          Send another message
-        </button>
 
       </div>
     );
   }
 
   /* =========================================================
-     FORM
+     FORM UI
   ========================================================= */
 
   return (
@@ -621,13 +405,8 @@ function ContactForm() {
           name="name"
           type="text"
           placeholder="Your full name"
+          autoComplete="name"
           required
-        />
-
-        <ValidationError
-          prefix="Name"
-          field="name"
-          errors={state.errors}
         />
 
       </div>
@@ -645,13 +424,8 @@ function ContactForm() {
           name="email"
           type="email"
           placeholder="you@example.com"
+          autoComplete="email"
           required
-        />
-
-        <ValidationError
-          prefix="Email"
-          field="email"
-          errors={state.errors}
         />
 
       </div>
@@ -672,17 +446,11 @@ function ContactForm() {
           required
         />
 
-        <ValidationError
-          prefix="Project details"
-          field="message"
-          errors={state.errors}
-        />
-
       </div>
 
-      {/* CRM Error */}
+      {/* Error */}
 
-      {crmError && (
+      {errorMessage && (
         <p
           style={{
             color: "#ef4444",
@@ -691,7 +459,7 @@ function ContactForm() {
             fontSize: "14px",
           }}
         >
-          {crmError}
+          {errorMessage}
         </p>
       )}
 
@@ -700,26 +468,16 @@ function ContactForm() {
       <button
         className="submit-button"
         type="submit"
-        disabled={
-          state.submitting ||
-          crmSending
-        }
+        disabled={sending}
       >
-
         <span>
-          {state.submitting ||
-          crmSending
+          {sending
             ? "Sending..."
             : "Send message"}
         </span>
 
         <Send size={17} />
-
       </button>
-
-      <ValidationError
-        errors={state.errors}
-      />
 
       {formId ===
         "YOUR_FORM_ID" && (
@@ -735,7 +493,7 @@ function ContactForm() {
 
     </form>
   );
-
+}
 
 /* ===========================================================
    APP
