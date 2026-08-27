@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, ValidationError } from "@formspree/react";
+import { useForm } from "@formspree/react";
 
 import {
   ArrowRight,
@@ -172,14 +172,273 @@ function ContactForm() {
     import.meta.env.VITE_FORMSPREE_ID ||
     "YOUR_FORM_ID";
 
-  const [state, handleFormspreeSubmit, reset] =
-    useForm(formId);
+  const [state, , reset] = useForm(formId);
 
-  const [crmSending, setCrmSending] =
+  const [sending, setSending] =
     useState(false);
 
-  const [crmError, setCrmError] =
+  const [success, setSuccess] =
+    useState(false);
+
+  const [errorMessage, setErrorMessage] =
     useState("");
+
+  const CRM_API_URL =
+    "https://site--brandspire-crm--gnbmjcfsyzsx.code.run/api";
+
+  const handleContactSubmit = async (event) => {
+    event.preventDefault();
+
+    if (sending) return;
+
+    const form = event.currentTarget;
+
+    const formData = new FormData(form);
+
+    const name = String(
+      formData.get("name") || ""
+    ).trim();
+
+    const email = String(
+      formData.get("email") || ""
+    ).trim();
+
+    const message = String(
+      formData.get("message") || ""
+    ).trim();
+
+    if (!name || !email || !message) {
+      setErrorMessage(
+        "Please fill all required fields."
+      );
+
+      return;
+    }
+
+    try {
+      setSending(true);
+      setErrorMessage("");
+
+      /* =====================================================
+         1. SEND TO FORMSPREE
+      ===================================================== */
+
+      const formspreeResponse =
+        await fetch(
+          `https://formspree.io/f/${formId}`,
+          {
+            method: "POST",
+
+            body: formData,
+
+            headers: {
+              Accept:
+                "application/json",
+            },
+          }
+        );
+
+      if (!formspreeResponse.ok) {
+        const formspreeData =
+          await formspreeResponse.json();
+
+        throw new Error(
+          formspreeData?.errors?.[0]?.message ||
+            "Formspree submission failed."
+        );
+      }
+
+      /* =====================================================
+         2. SEND TO CRM
+      ===================================================== */
+
+      const crmResponse =
+        await fetch(
+          `${CRM_API_URL}/notifications/contact`,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              name,
+              email,
+              projectDetails:
+                message,
+
+              source:
+                "BrandSpire Portfolio",
+            }),
+          }
+        );
+
+      let crmData = {};
+
+      try {
+        crmData =
+          await crmResponse.json();
+      } catch {
+        crmData = {};
+      }
+
+      if (!crmResponse.ok) {
+        throw new Error(
+          crmData?.message ||
+            "CRM notification failed."
+        );
+      }
+
+      form.reset();
+
+      setSuccess(true);
+    } catch (error) {
+      console.error(
+        "Contact Submit Error:",
+        error
+      );
+
+      setErrorMessage(
+        error.message ||
+          "Something went wrong. Please try again."
+      );
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <div className="form-success">
+        <div className="success-icon">
+          <Check size={28} />
+        </div>
+
+        <p className="eyebrow">
+          MESSAGE RECEIVED
+        </p>
+
+        <h3>
+          Thanks for reaching out.
+        </h3>
+
+        <p>
+          We’ve received your project details.
+          Our BrandSpire team will review your
+          message and get back to you as soon
+          as possible.
+        </p>
+
+        <button
+          className="secondary-button"
+          type="button"
+          onClick={() => {
+            reset();
+            setSuccess(false);
+            setErrorMessage("");
+          }}
+        >
+          Send another message
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="contact-form"
+      onSubmit={handleContactSubmit}
+    >
+      <input
+        type="hidden"
+        name="subject"
+        value="New BrandSpire Project Enquiry"
+      />
+
+      <div className="field-group">
+        <label htmlFor="name">
+          Full name
+        </label>
+
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Your full name"
+          required
+        />
+      </div>
+
+      <div className="field-group">
+        <label htmlFor="email">
+          Email address
+        </label>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          required
+        />
+      </div>
+
+      <div className="field-group">
+        <label htmlFor="message">
+          Project details
+        </label>
+
+        <textarea
+          id="message"
+          name="message"
+          rows="6"
+          placeholder="Tell us what you want to build, important features, expected timeline, or anything else we should know."
+          required
+        />
+      </div>
+
+      {errorMessage && (
+        <p
+          style={{
+            color: "#ef4444",
+            marginTop: "8px",
+            marginBottom: "8px",
+            fontSize: "14px",
+          }}
+        >
+          {errorMessage}
+        </p>
+      )}
+
+      <button
+        className="submit-button"
+        type="submit"
+        disabled={sending}
+      >
+        <span>
+          {sending
+            ? "Sending..."
+            : "Send message"}
+        </span>
+
+        <Send size={17} />
+      </button>
+
+      {formId === "YOUR_FORM_ID" && (
+        <p className="setup-note">
+          Developer setup: add your Formspree
+          form ID to{" "}
+          <code>
+            VITE_FORMSPREE_ID
+          </code>{" "}
+          before deploying.
+        </p>
+      )}
+    </form>
+  );
+}
 
   /* =========================================================
      SUBMIT CONTACT FORM
