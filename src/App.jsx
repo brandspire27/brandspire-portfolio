@@ -1295,11 +1295,11 @@ export default function App() {
 
             <div className="footer-contact">
 
-              <a href="mailto:brandspire27@gmail.com">
+              <a href="mailto:contact@brandspire.tech">
 
                 <Mail size={14} />
 
-                brandspire27@gmail.com
+              contact@brandspire.tech
 
               </a>
 
