@@ -1227,8 +1227,8 @@ export default function App() {
                       Email us
                     </strong>
 
-                    <a href="mailto:brandspire27@gmail.com">
-                      brandspire27@gmail.com
+                    <a href="mailto:contact@brandspire.tech">
+                      contact@brandspire.tech
                     </a>
                   </p>
 
