@@ -609,22 +609,19 @@ export default function App() {
 
               </div>
 
-              <h1>
-                We turn ideas into
+             <h1>
+  Web, App & Custom Software
+  <span className="gradient-text">
+    {" "}
+    Development Solutions.
+  </span>
+</h1>
 
-                <span className="gradient-text">
-                  {" "}
-                  digital products.
-                </span>
-              </h1>
-
-              <p className="hero-text">
-                BrandSpire is a software team
-                building web applications,
-                mobile experiences, business
-                systems and custom digital
-                products for real-world needs.
-              </p>
+<p className="hero-text">
+  BrandSpire builds modern websites, web applications,
+  mobile experiences, SaaS products, CRM, POS and
+  custom business software designed around real-world needs.
+</p>
 
               <div className="hero-actions">
 
