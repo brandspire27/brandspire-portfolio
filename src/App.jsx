@@ -85,25 +85,26 @@ const services = [
   {
     icon: Globe2,
     title: "Web Development",
-    text: "Fast, responsive websites and web applications designed around your business goals.",
+    text:
+      "Responsive business websites, web applications, dashboards and portals built for performance, usability and growth.",
   },
-
   {
     icon: MonitorSmartphone,
     title: "App Development",
-    text: "Modern mobile-first product experiences with intuitive flows and scalable foundations.",
+    text:
+      "Modern mobile application experiences with intuitive interfaces, scalable architecture and business-focused features.",
   },
-
   {
     icon: Layers3,
-    title: "Custom Software",
-    text: "Purpose-built software, dashboards, automation tools, billing systems and internal platforms.",
+    title: "Custom Software Development",
+    text:
+      "Custom CRM, POS, billing, inventory, automation and internal business software built around your workflow.",
   },
-
   {
     icon: Boxes,
-    title: "SaaS Products",
-    text: "From idea to deployable SaaS product with clean interfaces and business-ready architecture.",
+    title: "SaaS Development",
+    text:
+      "From product idea to deployable SaaS platform with modern interfaces, authentication, dashboards and scalable foundations.",
   },
 ];
 
@@ -854,10 +855,15 @@ export default function App() {
                   WHAT WE BUILD
                 </p>
 
-                <h2>
-                  Software made around your
-                  business.
-                </h2>
+               <h2>
+  Web, App & Software Solutions Built Around Your Business.
+</h2>
+
+<p>
+  From business websites and mobile applications to CRM,
+  POS, SaaS and automation tools, BrandSpire builds practical
+  digital products around your users and workflow.
+</p>
 
               </div>
 
@@ -910,7 +916,38 @@ export default function App() {
           </div>
 
         </section>
+           {/* ================= ABOUT ================= */}
 
+<section
+  className="section"
+  id="about"
+>
+  <div className="container">
+
+    <div className="section-heading split-heading">
+
+      <div>
+        <p className="eyebrow">
+          ABOUT BRANDSPIRE
+        </p>
+
+        <h2>
+          Technology solutions built for real business needs.
+        </h2>
+      </div>
+
+      <p>
+        BrandSpire is a software and digital technology team
+        focused on building modern websites, mobile applications,
+        custom software, SaaS platforms and business systems.
+        We turn ideas and operational problems into practical,
+        scalable digital products.
+      </p>
+
+    </div>
+
+  </div>
+</section>
         {/* ================= PROJECTS ================= */}
 
         <section
@@ -1317,7 +1354,12 @@ export default function App() {
             <a href="#services">
               Services
             </a>
-
+              <a
+  href="#about"
+  onClick={closeMenu}
+>
+  About
+</a>
             <a href="#work">
               Work
             </a>
