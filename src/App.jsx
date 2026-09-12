@@ -23,6 +23,7 @@ import {
   Sparkles,
   X,
   Zap,
+  HeartPulse
 } from "lucide-react";
 
 /* ===========================================================
@@ -52,7 +53,7 @@ const projects = [
 
   {
     number: "02",
-    title: "Demon's Biller",
+    title: "Demon's Biller (Demo)",
     category: "POS & Billing System",
     description:
       "A fast point-of-sale and billing experience for counter operations, with order creation, customer handling, bill generation and saved billing records.",
@@ -65,7 +66,7 @@ const projects = [
 
   {
     number: "03",
-    title: "KisanSetu",
+    title: "KisanSetu (Demo)",
     category: "E-commerce Marketplace",
     description:
       "An e-commerce marketplace experience created to connect users with products through a clean, accessible and scalable digital storefront.",
@@ -75,6 +76,30 @@ const projects = [
     previewClass: "preview-kisan",
     previewLabel: "COMMERCE / MARKETPLACE",
   },
+   {
+    number: "04",
+    title: "Restaurant Website (Demo)",
+    category: "Restaurant & Food Website",
+    description:
+      "A modern responsive restaurant website showcasing menu items, services, contact information and the overall dining experience.",
+    link: "https://ss.brandspire.tech/",
+    tags: ["Restaurant", "React", "Web Design"],
+    icon: Globe2,
+    previewClass: "preview-restaurant",
+    previewLabel: "RESTAURANT / WEBSITE",
+  },
+   {
+  number: "05",
+  title: "Hospital Management Demo",
+  category: "Healthcare Management System",
+  description:
+    "A hospital management demo designed to streamline patient records, appointments, doctor scheduling, staff coordination and basic hospital operations through a clean and user-friendly interface.",
+  link: "https://cc.brandspire.tech/",
+  tags: ["Healthcare", "Hospital", "Management System"],
+  icon: HeartPulse,
+  previewClass: "preview-hospital",
+  previewLabel: "HOSPITAL / MANAGEMENT",
+},
 ];
 
 /* ===========================================================
