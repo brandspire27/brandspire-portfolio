@@ -21,9 +21,10 @@ import {
   ShieldCheck,
   ShoppingBag,
   Sparkles,
+  UtensilsCrossed,
   X,
   Zap,
-  HeartPulse
+  HeartPulse,
 } from "lucide-react";
 
 /* ===========================================================
@@ -49,6 +50,7 @@ const projects = [
     icon: BarChart3,
     previewClass: "preview-crm",
     previewLabel: "CRM / DASHBOARD",
+    statusLabel: "LIVE PRODUCT",
   },
 
   {
@@ -62,6 +64,7 @@ const projects = [
     icon: Zap,
     previewClass: "preview-biller",
     previewLabel: "POS / BILLING",
+    statusLabel: "LIVE DEMO",
   },
 
   {
@@ -75,31 +78,34 @@ const projects = [
     icon: ShoppingBag,
     previewClass: "preview-kisan",
     previewLabel: "COMMERCE / MARKETPLACE",
+    statusLabel: "LIVE DEMO",
   },
-   {
+  {
     number: "04",
     title: "Restaurant Website (Demo)",
     category: "Restaurant & Food Website",
     description:
-      "A modern responsive restaurant website showcasing menu items, services, contact information and the overall dining experience.",
+      "A modern responsive restaurant website showcasing menu items, services, contact information and the overall dining experience through a clean and engaging interface.",
     link: "https://ss.brandspire.tech/",
-    tags: ["Restaurant", "React", "Web Design"],
-    icon: Globe2,
+    tags: ["Restaurant", "React", "Responsive Web"],
+    icon: UtensilsCrossed,
     previewClass: "preview-restaurant",
     previewLabel: "RESTAURANT / WEBSITE",
+    statusLabel: "LIVE DEMO",
   },
-   {
-  number: "05",
-  title: "Hospital Management Demo",
-  category: "Healthcare Management System",
-  description:
-    "A hospital management demo designed to streamline patient records, appointments, doctor scheduling, staff coordination and basic hospital operations through a clean and user-friendly interface.",
-  link: "https://cc.brandspire.tech/",
-  tags: ["Healthcare", "Hospital", "Management System"],
-  icon: HeartPulse,
-  previewClass: "preview-hospital",
-  previewLabel: "HOSPITAL / MANAGEMENT",
-},
+  {
+    number: "05",
+    title: "Hospital Management System (Demo)",
+    category: "Healthcare Management System",
+    description:
+      "A hospital management demo designed to organize patient records, appointments, doctor scheduling, staff coordination and day-to-day hospital operations through a clean and user-friendly interface.",
+    link: "https://cc.brandspire.tech/",
+    tags: ["Healthcare", "Hospital", "Management System"],
+    icon: HeartPulse,
+    previewClass: "preview-hospital",
+    previewLabel: "HOSPITAL / MANAGEMENT",
+    statusLabel: "LIVE DEMO",
+  },
 ];
 
 /* ===========================================================
@@ -1025,6 +1031,7 @@ export default function App() {
                   icon: Icon,
                   previewClass,
                   previewLabel,
+                  statusLabel,
                 }) => (
                   <article
                     className="project-card"
@@ -1102,7 +1109,7 @@ export default function App() {
 
                         <Icon size={16} />
 
-                        LIVE PRODUCT
+                        {statusLabel}
 
                       </div>
 
