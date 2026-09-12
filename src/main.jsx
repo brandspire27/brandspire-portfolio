@@ -8,7 +8,7 @@ import {
 
 import App from "./App.jsx";
 import SoftwareDevelopment from "./pages/SoftwareDevelopment.jsx";
-
+import WebDevelopment from "./pages/WebDevelopment.jsx";
 import "./styles.css";
 
 createRoot(document.getElementById("root")).render(
@@ -20,6 +20,10 @@ createRoot(document.getElementById("root")).render(
         <Route
           path="/software-development"
           element={<SoftwareDevelopment />}
+        />
+        <Route
+          path="/web-development"
+          element={<WebDevelopment />}
         />
       </Routes>
     </BrowserRouter>
