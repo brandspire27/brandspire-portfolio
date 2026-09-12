@@ -10,6 +10,7 @@ import App from "./App.jsx";
 import SoftwareDevelopment from "./pages/SoftwareDevelopment.jsx";
 import WebDevelopment from "./pages/WebDevelopment.jsx";
 import AppDevelopment from "./pages/AppDevelopment.jsx";
+import SaaSDevelopment from "./pages/SaaSDevelopment.jsx";
 import "./styles.css";
 
 createRoot(document.getElementById("root")).render(
@@ -29,6 +30,10 @@ createRoot(document.getElementById("root")).render(
         <Route
   path="/app-development"
   element={<AppDevelopment />}
+/>
+        <Route
+  path="/saas-development"
+  element={<SaaSDevelopment />}
 />
       </Routes>
     </BrowserRouter>
