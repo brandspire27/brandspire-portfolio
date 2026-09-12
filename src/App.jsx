@@ -954,21 +954,7 @@ export default function App() {
 </div>
 
            
-              <div
-  style={{
-    marginTop: "32px",
-    display: "flex",
-    justifyContent: "center",
-  }}
->
-  <a
-    href="/software-development"
-    className="text-button"
-  >
-    Explore Software Development
-    <ArrowRight size={17} />
-  </a>
-</div>
+
     </div>
 
         </section>
