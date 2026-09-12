@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   BadgeCheck,
@@ -116,28 +116,35 @@ const services = [
   {
     icon: Globe2,
     title: "Web Development",
-    text: "Responsive business websites, web applications, dashboards and portals built for performance, usability and growth.",
+    text:
+      "Responsive business websites, web applications, dashboards and portals built for performance, usability and growth.",
+    link: "/web-development",
   },
 
   {
     icon: MonitorSmartphone,
     title: "App Development",
-    text: "Modern mobile application experiences with intuitive interfaces, scalable architecture and business-focused features.",
+    text:
+      "Modern mobile application experiences with intuitive interfaces, scalable architecture and business-focused features.",
+    link: "/app-development",
   },
 
   {
     icon: Layers3,
     title: "Custom Software Development",
-    text: "Custom CRM, POS, billing, inventory, automation and internal business software built around your workflow.",
+    text:
+      "Custom CRM, POS, billing, inventory, automation and internal business software built around your workflow.",
+    link: "/software-development",
   },
 
   {
     icon: Boxes,
     title: "SaaS Development",
-    text: "From product idea to deployable SaaS platform with modern interfaces, authentication, dashboards and scalable foundations.",
+    text:
+      "From product idea to deployable SaaS platform with modern interfaces, authentication, dashboards and scalable foundations.",
+    link: "/saas-development",
   },
 ];
-
 /* ===========================================================
    PROCESS
 =========================================================== */
@@ -907,41 +914,46 @@ export default function App() {
 
             </div>
 
-            <div className="services-grid">
+           <div className="services-grid">
+  {services.map(
+    (
+      {
+        icon: Icon,
+        title,
+        text,
+        link,
+      },
+      index
+    ) => (
+      <Link
+        to={link}
+        className="service-card"
+        key={title}
+      >
+        <div className="service-number">
+          0{index + 1}
+        </div>
 
-              {services.map(
-                (
-                  {
-                    icon: Icon,
-                    title,
-                    text,
-                  },
-                  index
-                ) => (
-                  <article
-                    className="service-card"
-                    key={title}
-                  >
+        <div className="icon-box">
+          <Icon size={22} />
+        </div>
 
-                    <div className="service-number">
-                      0{index + 1}
-                    </div>
+        <h3>{title}</h3>
 
-                    <div className="icon-box">
-                      <Icon size={22} />
-                    </div>
+        <p>{text}</p>
 
-                    <h3>{title}</h3>
+        <div className="service-learn-more">
+          Explore service
+          <ArrowRight size={15} />
+        </div>
 
-                    <p>{text}</p>
+        <span className="card-line" />
+      </Link>
+    )
+  )}
+</div>
 
-                    <span className="card-line" />
-
-                  </article>
-                )
-              )}
-
-            </div>
+           
               <div
   style={{
     marginTop: "32px",
