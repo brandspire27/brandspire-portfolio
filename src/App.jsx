@@ -976,12 +976,12 @@ export default function App() {
   </a>
 
   <a
-    href="/software-development"
-    className="text-button"
-  >
-    Explore Software Development
-    <ArrowRight size={17} />
-  </a>
+  href="/app-development"
+  className="text-button"
+>
+  Explore App Development
+  <ArrowRight size={17} />
+</a>
 </div>
           </div>
 
