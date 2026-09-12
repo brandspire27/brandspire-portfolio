@@ -958,6 +958,31 @@ export default function App() {
     <ArrowRight size={17} />
   </a>
 </div>
+            <div
+  style={{
+    marginTop: "32px",
+    display: "flex",
+    justifyContent: "center",
+    gap: "24px",
+    flexWrap: "wrap",
+  }}
+>
+  <a
+    href="/web-development"
+    className="text-button"
+  >
+    Explore Web Development
+    <ArrowRight size={17} />
+  </a>
+
+  <a
+    href="/software-development"
+    className="text-button"
+  >
+    Explore Software Development
+    <ArrowRight size={17} />
+  </a>
+</div>
           </div>
 
         </section>
