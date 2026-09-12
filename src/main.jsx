@@ -9,7 +9,7 @@ import {
 import App from "./App.jsx";
 import SoftwareDevelopment from "./pages/SoftwareDevelopment.jsx";
 
-import "./style.css";
+import "./styles.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
