@@ -9,6 +9,7 @@ import {
 import App from "./App.jsx";
 import SoftwareDevelopment from "./pages/SoftwareDevelopment.jsx";
 import WebDevelopment from "./pages/WebDevelopment.jsx";
+import AppDevelopment from "./pages/AppDevelopment.jsx";
 import "./styles.css";
 
 createRoot(document.getElementById("root")).render(
@@ -25,6 +26,10 @@ createRoot(document.getElementById("root")).render(
           path="/web-development"
           element={<WebDevelopment />}
         />
+        <Route
+  path="/app-development"
+  element={<AppDevelopment />}
+/>
       </Routes>
     </BrowserRouter>
   </StrictMode>
