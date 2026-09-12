@@ -176,17 +176,16 @@ function Logo() {
   return (
     <a
       className="brand"
-      href="#home"
+      href="/"
       aria-label="BrandSpire home"
     >
-      <span className="brand-mark">
-        <Sparkles
-          size={17}
-          strokeWidth={2.5}
-        />
-      </span>
+      <img
+        src="/brandmark.png"
+        alt=""
+        className="brand-logo-mark"
+      />
 
-      <span>
+      <span className="brand-name">
         Brand<span>Spire</span>
       </span>
     </a>
