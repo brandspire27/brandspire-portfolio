@@ -9,6 +9,8 @@ import {
   Rocket,
 } from "lucide-react";
 
+import SEO from "../components/SEO.jsx";
+
 export default function WebDevelopment() {
   const solutions = [
     {
@@ -54,6 +56,13 @@ export default function WebDevelopment() {
 
   return (
     <div className="site-shell">
+
+      <SEO
+  title="Web Development Services | BrandSpire"
+  description="BrandSpire builds modern business websites, web applications, dashboards and responsive web solutions."
+  path="/web-development"
+/>
+      
       <main>
 
         <section className="section hero">
