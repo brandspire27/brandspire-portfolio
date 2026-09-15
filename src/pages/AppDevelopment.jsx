@@ -9,6 +9,8 @@ import {
   Zap,
 } from "lucide-react";
 
+import SEO from "../components/SEO.jsx";
+
 export default function AppDevelopment() {
   const solutions = [
     {
@@ -54,6 +56,13 @@ export default function AppDevelopment() {
 
   return (
     <div className="site-shell">
+
+         <SEO
+      title="App Development Services | BrandSpire"
+      description="BrandSpire develops modern mobile applications and business apps designed around real user and business requirements."
+      path="/app-development"
+    />
+      
       <main>
 
         <section className="section hero">
