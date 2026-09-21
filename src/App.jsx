@@ -305,50 +305,42 @@ function ContactForm() {
         );
       }
 
-      /* =====================================================
-         2. SEND TO CRM
-      ===================================================== */
+    /* =====================================================
+   2. SEND TO CRM
+   CRM failure should NOT break the contact form
+===================================================== */
 
-      const crmResponse =
-        await fetch(
-          `${CRM_API_URL}/notifications/contact`,
-          {
-            method: "POST",
+try {
+  const crmResponse = await fetch(
+    `${CRM_API_URL}/notifications/contact`,
+    {
+      method: "POST",
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-            body: JSON.stringify({
-              name,
-              email,
+      body: JSON.stringify({
+        name,
+        email,
+        projectDetails: message,
+        source: "BrandSpire Portfolio",
+      }),
+    }
+  );
 
-              projectDetails:
-                message,
-
-              source:
-                "BrandSpire Portfolio",
-            }),
-          }
-        );
-
-      let crmData = {};
-
-      try {
-        crmData =
-          await crmResponse.json();
-      } catch {
-        crmData = {};
-      }
-
-      if (!crmResponse.ok) {
-        throw new Error(
-          crmData?.message ||
-            "CRM notification failed."
-        );
-      }
-
+  if (!crmResponse.ok) {
+    console.warn(
+      "CRM notification failed:",
+      crmResponse.status
+    );
+  }
+} catch (crmError) {
+  console.warn(
+    "CRM notification could not be sent:",
+    crmError
+  );
+}
       /* =====================================================
          SUCCESS
       ===================================================== */
