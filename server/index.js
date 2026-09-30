@@ -331,7 +331,7 @@ app.put('/api/admin/settings/:key', requireAdmin, async (req,res)=>{ const {data
 const clientDist = path.join(__dirname, '..', 'dist');
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(clientDist));
-  app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+  app.get('/{*splat}', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 }
 
 const port = Number(process.env.PORT || 3000);
