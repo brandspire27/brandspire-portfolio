@@ -1,1429 +1,210 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  BadgeCheck,
-  BarChart3,
-  Boxes,
-  Check,
-  ChevronRight,
-  Code2,
-  ExternalLink,
-  Globe2,
-  Layers3,
-  Mail,
-  MapPin,
-  Menu,
-  MessageSquareText,
-  MonitorSmartphone,
-  Rocket,
-  Send,
-  ShieldCheck,
-  ShoppingBag,
-  Sparkles,
-  UtensilsCrossed,
-  X,
-  Zap,
-  HeartPulse,
-} from "lucide-react";
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, Code2, Layers3, Smartphone, Sparkles, Check, Play, BarChart3, ShoppingBag, HeartPulse, UtensilsCrossed, Star, Quote } from 'lucide-react';
+import SiteLayout, { SectionIntro } from './components/SiteLayout.jsx';
+import { API_URL } from './lib.js';
 
-/* ===========================================================
-   CRM API
-=========================================================== */
-
-const CRM_API_URL =
-  "https://site--brandspire-crm--gnbmjcfsyzsx.code.run/api";
-
-/* ===========================================================
-   PROJECTS
-=========================================================== */
-
-const projects = [
-  {
-    number: "01",
-    title: "BrandSpire CRM",
-    category: "Business CRM Platform",
-    description:
-      "A modern customer relationship management platform built to manage customers, leads, tasks, invoices and day-to-day business operations from one place.",
-    link: "https://brandspire-crm.vercel.app/dashboard",
-    tags: ["CRM", "React", "Business SaaS"],
-    icon: BarChart3,
-    previewClass: "preview-crm",
-    previewLabel: "CRM / DASHBOARD",
-    statusLabel: "LIVE PRODUCT",
-  },
-
-  {
-    number: "02",
-    title: "Demon's Biller (Demo)",
-    category: "POS & Billing System",
-    description:
-      "A fast point-of-sale and billing experience for counter operations, with order creation, customer handling, bill generation and saved billing records.",
-    link: "https://demon-s-biller.vercel.app/create-bill",
-    tags: ["POS", "Billing", "Responsive UI"],
-    icon: Zap,
-    previewClass: "preview-biller",
-    previewLabel: "POS / BILLING",
-    statusLabel: "LIVE DEMO",
-  },
-
-  {
-    number: "03",
-    title: "KisanSetu (Demo)",
-    category: "E-commerce Marketplace",
-    description:
-      "An e-commerce marketplace experience created to connect users with products through a clean, accessible and scalable digital storefront.",
-    link: "https://kisan-setu-gamma.vercel.app/",
-    tags: ["E-commerce", "Marketplace", "Web App"],
-    icon: ShoppingBag,
-    previewClass: "preview-kisan",
-    previewLabel: "COMMERCE / MARKETPLACE",
-    statusLabel: "LIVE DEMO",
-  },
-  {
-    number: "04",
-    title: "Restaurant Website (Demo)",
-    category: "Restaurant & Food Website",
-    description:
-      "A modern responsive restaurant website showcasing menu items, services, contact information and the overall dining experience through a clean and engaging interface.",
-    link: "https://ss.brandspire.tech/",
-    tags: ["Restaurant", "React", "Responsive Web"],
-    icon: UtensilsCrossed,
-    previewClass: "preview-restaurant",
-    previewLabel: "RESTAURANT / WEBSITE",
-    statusLabel: "LIVE DEMO",
-  },
-  {
-    number: "05",
-    title: "Hospital Management System (Demo)",
-    category: "Healthcare Management System",
-    description:
-      "A hospital management demo designed to organize patient records, appointments, doctor scheduling, staff coordination and day-to-day hospital operations through a clean and user-friendly interface.",
-    link: "https://cc.brandspire.tech/",
-    tags: ["Healthcare", "Hospital", "Management System"],
-    icon: HeartPulse,
-    previewClass: "preview-hospital",
-    previewLabel: "HOSPITAL / MANAGEMENT",
-    statusLabel: "LIVE DEMO",
-  },
+const fallbackProjects = [
+  { title: 'BrandSpire CRM', category: 'Business SaaS', description: 'A modern CRM platform for customers, leads, tasks and everyday business operations.', link: 'https://brandspire-crm.vercel.app/dashboard', tags: ['CRM', 'React', 'SaaS'], icon: BarChart3 },
+  { title: "Demon's Biller", category: 'POS & Billing', description: 'A fast point-of-sale experience for counter operations, orders and saved billing records.', link: 'https://demon-s-biller.vercel.app/create-bill', tags: ['POS', 'Billing', 'Web App'], icon: ShoppingBag },
+  { title: 'KisanSetu', category: 'Marketplace', description: 'An accessible e-commerce marketplace experience designed for scalable digital commerce.', link: 'https://kisan-setu-gamma.vercel.app/', tags: ['E-commerce', 'Marketplace'], icon: ShoppingBag },
+  { title: 'Restaurant Website', category: 'Hospitality', description: 'A responsive restaurant experience built around menu discovery, brand and contact journeys.', link: 'https://ss.brandspire.tech/', tags: ['Restaurant', 'React'], icon: UtensilsCrossed },
+  { title: 'Hospital Management', category: 'Healthcare', description: 'A management interface for patients, appointments, doctors, staff and daily operations.', link: 'https://cc.brandspire.tech/', tags: ['Healthcare', 'Management'], icon: HeartPulse },
+];
+const fallbackReviews = [
+  { name: 'Aarav Mehta', role: 'Founder · SaaS startup', rating: 5, text: 'The team brought structure to our idea and turned it into a polished product experience. The communication throughout the project was clear and focused.' },
+  { name: 'Priya Sharma', role: 'Business owner', rating: 5, text: 'BrandSpire understood what we needed quickly and delivered a website that feels modern, fast and genuinely easy for our customers to use.' },
+  { name: 'Rohan Verma', role: 'Operations lead', rating: 5, text: 'We needed custom software around our workflow, not another generic tool. The final system was designed around how our team actually works.' },
+  { name: 'Neha Kapoor', role: 'Marketing lead', rating: 5, text: 'From the first conversation to launch, the process felt organised and thoughtful. The design quality and attention to detail really stood out.' },
 ];
 
-/* ===========================================================
-   SERVICES
-=========================================================== */
 
-const services = [
-  {
-    icon: Globe2,
-    title: "Web Development",
-    text:
-      "Responsive business websites, web applications, dashboards and portals built for performance, usability and growth.",
-    link: "/web-development",
-  },
-
-  {
-    icon: MonitorSmartphone,
-    title: "App Development",
-    text:
-      "Modern mobile application experiences with intuitive interfaces, scalable architecture and business-focused features.",
-    link: "/app-development",
-  },
-
-  {
-    icon: Layers3,
-    title: "Custom Software Development",
-    text:
-      "Custom CRM, POS, billing, inventory, automation and internal business software built around your workflow.",
-    link: "/software-development",
-  },
-
-  {
-    icon: Boxes,
-    title: "SaaS Development",
-    text:
-      "From product idea to deployable SaaS platform with modern interfaces, authentication, dashboards and scalable foundations.",
-    link: "/saas-development",
-  },
-];
-/* ===========================================================
-   PROCESS
-=========================================================== */
-
-const process = [
-  [
-    "01",
-    "Discover",
-    "We understand your idea, users, goals and the exact problem the software needs to solve.",
-  ],
-
-  [
-    "02",
-    "Design",
-    "We shape the user experience, visual direction, screens and product flow before building.",
-  ],
-
-  [
-    "03",
-    "Build",
-    "We develop the product with a focus on performance, responsiveness and maintainability.",
-  ],
-
-  [
-    "04",
-    "Launch",
-    "We test, deploy and help take the project from development to a working live product.",
-  ],
-];
-
-/* ===========================================================
-   LOGO
-=========================================================== */
-
-function Logo() {
+function ReviewStars({ rating = 0, onChange, interactive = false }) {
   return (
-    <a
-      className="brand"
-      href="/"
-      aria-label="BrandSpire home"
-    >
-      <img
-        src="/brandmark.png"
-        alt=""
-        className="brand-logo-mark"
-      />
-
-      <span className="brand-name">
-        Brand<span>Spire</span>
-      </span>
-    </a>
+    <div className={interactive ? 'review-stars-input' : 'review-stars'} role={interactive ? 'radiogroup' : undefined} aria-label={interactive ? `Choose ${rating} out of 5 stars` : `${rating} out of 5 stars`}>
+      {interactive && (
+        <button type="button" className={`star-zero ${rating === 0 ? 'selected' : ''}`} onClick={() => onChange(0)} aria-label="0 stars">0</button>
+      )}
+      {[1, 2, 3, 4, 5].map((i) => (
+        interactive ? (
+          <button type="button" key={i} className={`star-button ${i <= rating ? 'selected' : ''}`} onClick={() => onChange(i)} aria-label={`${i} star${i > 1 ? 's' : ''}`}>
+            <Star size={22} fill={i <= rating ? 'currentColor' : 'none'} />
+          </button>
+        ) : (
+          <Star key={i} size={16} fill={i <= rating ? 'currentColor' : 'none'} />
+        )
+      ))}
+    </div>
   );
 }
 
-/* ===========================================================
-   CONTACT FORM
-=========================================================== */
+function ReviewForm({ onSubmitted, onClose }) {
+  const [form, setForm] = useState({ name: '', role: '', rating: 0, text: '' });
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
 
-function ContactForm() {
-  const formId =
-    import.meta.env.VITE_FORMSPREE_ID ||
-    "YOUR_FORM_ID";
+  const update = (key, value) => setForm((current) => ({ ...current, [key]: value }));
 
-  const [sending, setSending] =
-    useState(false);
-
-  const [success, setSuccess] =
-    useState(false);
-
-  const [errorMessage, setErrorMessage] =
-    useState("");
-
-  /* =========================================================
-     SUBMIT FORM
-  ========================================================= */
-
-  const handleContactSubmit = async (event) => {
+  const submit = async (event) => {
     event.preventDefault();
-
-    if (sending) return;
-
-    const form = event.currentTarget;
-
-    const formData =
-      new FormData(form);
-
-    const name = String(
-      formData.get("name") || ""
-    ).trim();
-
-    const email = String(
-      formData.get("email") || ""
-    ).trim();
-
-    const message = String(
-      formData.get("message") || ""
-    ).trim();
-
-    if (
-      !name ||
-      !email ||
-      !message
-    ) {
-      setErrorMessage(
-        "Please fill all required fields."
-      );
-
+    if (!form.name.trim() || !form.text.trim()) {
+      setMessage('Please enter your name and review.');
       return;
     }
-
-    if (
-      formId === "YOUR_FORM_ID"
-    ) {
-      setErrorMessage(
-        "Formspree is not configured. Please add VITE_FORMSPREE_ID."
-      );
-
-      return;
-    }
-
+    setSaving(true);
+    setMessage('');
     try {
-      setSending(true);
-      setErrorMessage("");
-
-      /* =====================================================
-         1. SEND TO FORMSPREE
-      ===================================================== */
-
-      const formspreeResponse =
-        await fetch(
-          `https://formspree.io/f/${formId}`,
-          {
-            method: "POST",
-
-            body: formData,
-
-            headers: {
-              Accept:
-                "application/json",
-            },
-          }
-        );
-
-      let formspreeData = {};
-
-      try {
-        formspreeData =
-          await formspreeResponse.json();
-      } catch {
-        formspreeData = {};
-      }
-
-      if (!formspreeResponse.ok) {
-        throw new Error(
-          formspreeData?.errors?.[0]
-            ?.message ||
-            "Form submission failed."
-        );
-      }
-
-    /* =====================================================
-   2. SEND TO CRM
-   CRM failure should NOT break the contact form
-===================================================== */
-
-try {
-  const crmResponse = await fetch(
-    `${CRM_API_URL}/notifications/contact`,
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        name,
-        email,
-        projectDetails: message,
-        source: "BrandSpire Portfolio",
-      }),
-    }
-  );
-
-  if (!crmResponse.ok) {
-    console.warn(
-      "CRM notification failed:",
-      crmResponse.status
-    );
-  }
-} catch (crmError) {
-  console.warn(
-    "CRM notification could not be sent:",
-    crmError
-  );
-}
-      /* =====================================================
-         SUCCESS
-      ===================================================== */
-
-      form.reset();
-
-      setSuccess(true);
+      const response = await fetch(`${API_URL}/public/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json')
+        ? await response.json()
+        : { error: `Review server returned ${response.status}. Make sure the Express server is running on port 3000.` };
+      if (!response.ok) throw new Error(data?.error || 'Unable to publish your review.');
+      onSubmitted(data.data);
+      setForm({ name: '', role: '', rating: 0, text: '' });
+      setMessage('Thanks! Your review is now visible to visitors.');
     } catch (error) {
-      console.error(
-        "Contact Submit Error:",
-        error
-      );
-
-      setErrorMessage(
-        error.message ||
-          "Something went wrong. Please try again."
-      );
+      setMessage(error.message || 'Unable to publish your review.');
     } finally {
-      setSending(false);
+      setSaving(false);
     }
   };
 
-  /* =========================================================
-     SUCCESS UI
-  ========================================================= */
-
-  if (success) {
-    return (
-      <div className="form-success">
-
-        <div className="success-icon">
-          <Check size={28} />
-        </div>
-
-        <p className="eyebrow">
-          MESSAGE RECEIVED
-        </p>
-
-        <h3>
-          Thanks for reaching out.
-        </h3>
-
-        <p>
-          We’ve received your project details.
-          Our BrandSpire team will review your
-          message and get back to you as soon
-          as possible.
-        </p>
-
-        <button
-          className="secondary-button"
-          type="button"
-          onClick={() => {
-            setSuccess(false);
-            setErrorMessage("");
-          }}
-        >
-          Send another message
-        </button>
-
-      </div>
-    );
-  }
-
-  /* =========================================================
-     FORM UI
-  ========================================================= */
-
   return (
-    <form
-      className="contact-form"
-      onSubmit={handleContactSubmit}
-    >
-
-      <input
-        type="hidden"
-        name="subject"
-        value="New BrandSpire Project Enquiry"
-      />
-
-      {/* Name */}
-
-      <div className="field-group">
-
-        <label htmlFor="name">
-          Full name
-        </label>
-
-        <input
-          id="name"
-          name="name"
-          type="text"
-          placeholder="Your full name"
-          autoComplete="name"
-          required
-        />
-
+    <form className="write-review-panel" onSubmit={submit}>
+      <div className="write-review-head">
+        <div>
+          <p className="eyebrow">WRITE A REVIEW</p>
+          <h3>Tell us about your BrandSpire experience.</h3>
+        </div>
+        <button type="button" className="review-close" onClick={onClose} aria-label="Close review form">×</button>
       </div>
 
-      {/* Email */}
-
-      <div className="field-group">
-
-        <label htmlFor="email">
-          Email address
+      <div className="review-form-grid">
+        <label>
+          <span>Your name</span>
+          <input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Your name" maxLength={80} required />
         </label>
-
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          autoComplete="email"
-          required
-        />
-
+        <label>
+          <span>Role / company <em>optional</em></span>
+          <input value={form.role} onChange={(e) => update('role', e.target.value)} placeholder="Founder · Company" maxLength={120} />
+        </label>
       </div>
 
-      {/* Message */}
+      <label className="review-rating-field">
+        <span>Rating <em>0–5 stars</em></span>
+        <ReviewStars rating={form.rating} onChange={(value) => update('rating', value)} interactive />
+      </label>
 
-      <div className="field-group">
+      <label>
+        <span>Your review</span>
+        <textarea value={form.text} onChange={(e) => update('text', e.target.value)} placeholder="Share your experience with BrandSpire..." rows={5} maxLength={1200} required />
+      </label>
 
-        <label htmlFor="message">
-          Project details
-        </label>
-
-        <textarea
-          id="message"
-          name="message"
-          rows="6"
-          placeholder="Tell us what you want to build, important features, expected timeline, or anything else we should know."
-          required
-        />
-
+      <div className="review-form-footer">
+        <button className="primary-button" type="submit" disabled={saving}>{saving ? 'Publishing…' : 'Publish review'} <ArrowRight size={17} /></button>
+        {message && <span className="review-form-message">{message}</span>}
       </div>
-
-      {/* Error */}
-
-      {errorMessage && (
-        <p
-          style={{
-            color: "#ef4444",
-            marginTop: "8px",
-            marginBottom: "8px",
-            fontSize: "14px",
-          }}
-        >
-          {errorMessage}
-        </p>
-      )}
-
-      {/* Submit */}
-
-      <button
-        className="submit-button"
-        type="submit"
-        disabled={sending}
-      >
-        <span>
-          {sending
-            ? "Sending..."
-            : "Send message"}
-        </span>
-
-        <Send size={17} />
-      </button>
-
-      {formId ===
-        "YOUR_FORM_ID" && (
-        <p className="setup-note">
-          Developer setup: add your
-          Formspree form ID to{" "}
-          <code>
-            VITE_FORMSPREE_ID
-          </code>{" "}
-          before deploying.
-        </p>
-      )}
-
     </form>
   );
 }
 
-/* ===========================================================
-   APP
-=========================================================== */
+
+function RotatingAboutTagline() {
+  const words = ['useful', 'powerful', 'beautiful', 'scalable', 'impactful'];
+  const [index, setIndex] = useState(0);
+  useEffect(() => { const id = window.setInterval(() => setIndex(i => (i + 1) % words.length), 2800); return () => window.clearInterval(id) }, []);
+  return <h2 className="home-about-tagline" aria-label={`We turn ideas into ${words[index]} digital products.`}>
+    <span className="home-about-fixed">We turn ideas into </span>
+    <span className="home-about-changing" key={words[index]}>{words[index]}</span><br></br><span className="home-about-fixed home-about-products"> digital products.</span>
+  </h2>;
+}
+
+const fallbackServices = [
+  { title: 'Web Development', text: 'High-performance websites, portals and web applications with clean UX and responsive foundations.', icon: Code2, link: '/web-development' },
+  { title: 'App Development', text: 'Mobile experiences designed around your users, workflows and product goals.', icon: Smartphone, link: '/app-development' },
+  { title: 'Custom Software', text: 'CRM, POS, billing, inventory and internal tools built around the way your business actually works.', icon: Layers3, link: '/software-development' },
+  { title: 'SaaS Development', text: 'Product strategy, interfaces, authentication, dashboards and scalable SaaS foundations.', icon: Sparkles, link: '/saas-development' },
+];
 
 export default function App() {
-  const [menuOpen, setMenuOpen] =
-    useState(false);
-
-  const closeMenu = () =>
-    setMenuOpen(false);
-
-  return (
-    <div className="site-shell">
-
-      <div className="ambient ambient-one" />
-      <div className="ambient ambient-two" />
-
-      {/* ================= HEADER ================= */}
-
-      <header className="site-header">
-
-        <div className="container nav-wrap">
-
-          <Logo />
-
-          <nav
-            className={
-              menuOpen
-                ? "nav-links nav-open"
-                : "nav-links"
-            }
-          >
-
-            <a
-              href="#services"
-              onClick={closeMenu}
-            >
-              Services
-            </a>
-
-            <a
-              href="#about"
-              onClick={closeMenu}
-            >
-              About
-            </a>
-
-            <a
-              href="#work"
-              onClick={closeMenu}
-            >
-              Work
-            </a>
-
-            <a
-              href="#process"
-              onClick={closeMenu}
-            >
-              Process
-            </a>
-
-            <a
-              href="#contact"
-              onClick={closeMenu}
-            >
-              Contact
-            </a>
-
-          </nav>
-
-          <a
-            className="nav-cta"
-            href="#contact"
-          >
-            Start a project
-
-            <ArrowRight size={15} />
-          </a>
-
-          <button
-            className="menu-button"
-            type="button"
-            onClick={() =>
-              setMenuOpen(
-                (value) => !value
-              )
-            }
-            aria-label="Toggle navigation"
-          >
-            {menuOpen ? (
-              <X />
-            ) : (
-              <Menu />
-            )}
-          </button>
-
-        </div>
-
-      </header>
-
-      <main>
-
-        {/* ================= HERO ================= */}
-
-        <section
-          className="hero section"
-          id="home"
-        >
-
-          <div className="container hero-grid">
-
-            <div className="hero-copy">
-
-              <div className="pill">
-
-                <span className="live-dot" />
-
-                SOFTWARE SOLUTIONS, BUILT TO SHIP
-
-              </div>
-
-              <h1>
-                Web, App & Custom Software
-
-                <span className="gradient-text">
-                  {" "}
-                  Development Solutions.
-                </span>
-              </h1>
-
-              <p className="hero-text">
-                BrandSpire builds modern websites, web applications,
-                mobile experiences, SaaS products, CRM, POS and
-                custom business software designed around real-world needs.
-              </p>
-
-              <div className="hero-actions">
-
-                <a
-                  className="primary-button"
-                  href="#work"
-                >
-                  Explore our work
-
-                  <ArrowRight
-                    size={18}
-                  />
-                </a>
-
-                <a
-                  className="text-button"
-                  href="#contact"
-                >
-                  <MessageSquareText
-                    size={17}
-                  />
-
-                  Discuss a project
-                </a>
-
-              </div>
-
-              <div className="hero-proof">
-
-                <span>
-                  <BadgeCheck
-                    size={17}
-                  />
-
-                  Project-focused development
-                </span>
-
-                <span>
-                  <ShieldCheck
-                    size={17}
-                  />
-
-                  Clean & scalable builds
-                </span>
-
-              </div>
-
-            </div>
-
-            <div
-              className="hero-visual"
-              aria-hidden="true"
-            >
-
-              <div className="orb orb-a" />
-              <div className="orb orb-b" />
-
-              <div className="code-window glass-panel">
-
-                <div className="window-top">
-
-                  <div className="traffic">
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-
-                  <span>
-                    brandspire / build
-                  </span>
-
+  const [projects, setProjects] = useState(fallbackProjects); const [services, setServices] = useState(fallbackServices);
+  const [reviewItems, setReviewItems] = useState(fallbackReviews);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  useEffect(() => { fetch(`${API_URL}/public/content`).then(r => r.ok ? r.json() : null).then(d => { if (d?.projects?.length) setProjects(d.projects.slice(0, 6).map((p, i) => ({ ...p, icon: Code2, number: String(i + 1).padStart(2, '0') }))); if (d?.services?.length) setServices(d.services.slice(0, 4).map(s => ({ ...s, icon: Code2 }))); }).catch(() => { });
+    fetch(`${API_URL}/public/reviews`).then(r => r.ok ? r.json() : null).then(d => { if (d?.reviews?.length) setReviewItems(d.reviews); }).catch(() => { });
+  }, []);
+  return <SiteLayout>
+    <section className="hero home-hero"><div className="container hero-grid"><div className="hero-copy"><div className="pill"><i /> DIGITAL PRODUCT & SOFTWARE STUDIO</div><h1>We build digital products that <span className="hero-green">move business forward.</span></h1><p className="hero-text">BrandSpire designs and develops websites, apps, SaaS products and custom software for teams that want to turn ideas into useful, scalable products.</p><div className="hero-actions"><Link className="primary-button" to="/work">Explore our work <ArrowRight size={18} /></Link><Link className="text-button" to="/contact">Start a conversation <ArrowUpRight size={17} /></Link></div><div className="hero-meta"><span><Check size={15} /> Product-first thinking</span><span><Check size={15} /> Design + development</span><span><Check size={15} /> Built to ship</span></div></div><div className="hero-stage"><div className="stage-glow" /><div className="stage-card stage-main"><div className="stage-top"><span>BRANDSPIRE / PRODUCT</span><span className="stage-live">● LIVE</span></div><div className="stage-title">Ideas into <strong>working products.</strong></div><div className="stage-grid"><div><small>01</small><b>Discover</b><span>Strategy</span></div><div className="stage-active"><small>02</small><b>Design</b><span>Experience</span></div><div><small>03</small><b>Build</b><span>Engineering</span></div><div><small>04</small><b>Launch</b><span>Growth</span></div></div><div className="stage-footer"><span>Web · Apps · SaaS · Software</span><span>01—04</span></div></div><div className="stage-float stage-float-a"><Sparkles size={17} /><span>Built around your workflow</span></div><div className="stage-float stage-float-b"><Play size={16} /><span>Design → Build → Launch</span></div></div></div><div className="container hero-marquee"><span>WEB</span><i /><span>APP</span><i /><span>SAAS</span><i /><span>SOFTWARE</span><i /><span>AI & AUTOMATION</span></div></section>
+    <section className="section intro-section"><div className="container"><SectionIntro eyebrow="WHY BRANDSPIRE" title="A digital team for ideas that need to become real." text="We combine strategy, product design and engineering into one focused process. No unnecessary layers — just clear thinking, thoughtful interfaces and software that works." /><div className="feature-grid"><article><span>01</span><h3>Think product-first</h3><p>We start with the user, business problem and desired outcome before jumping into screens or code.</p></article><article><span>02</span><h3>Design for clarity</h3><p>Interfaces stay purposeful, easy to understand and consistent across the product experience.</p></article><article><span>03</span><h3>Engineer for growth</h3><p>Modern architecture and maintainable foundations make it easier to keep improving after launch.</p></article></div></div></section>
+    <section className="section home-about-section"><div className="container home-about-grid"><div><p className="eyebrow">ABOUT BRANDSPIRE</p><p className="home-about-kicker">Digital products with purpose, personality and a clear path to launch.</p></div><div><RotatingAboutTagline /><p className="home-about-copy">We combine strategy, design and engineering to turn ambitious ideas into digital experiences and software that people can actually use.</p><Link className="text-button" to="/about">Discover BrandSpire <ArrowRight size={17} /></Link></div></div></section>
+    <section className="section dark-section"><div className="container"><SectionIntro eyebrow="WHAT WE DO" title="From first sketch to production software." text="Choose the capability you need today — or bring us the whole product and we’ll help shape the path." /><div className="service-grid-new">{services.map(({ title, text, icon: Icon, link }, i) => <Link to={link || '/services'} className="service-card-new" key={title}><div className="service-index">0{i + 1}</div><div className="service-icon"><Icon size={22} /></div><h3>{title}</h3><p>{text}</p><span className="service-arrow"><ArrowUpRight size={18} /></span></Link>)}</div></div></section>
+    <section className="section work-section-new"><div className="container"><div className="work-head-new"><div><p className="eyebrow">SELECTED WORK</p><h2>Built for real-world use.</h2></div><Link className="text-button" to="/work">View all projects <ArrowRight size={17} /></Link></div><div className="project-masonry">{projects.slice(0, 4).map((p, i) => { const Icon = p.icon || Code2; return <a className={`project-tile project-tile-${i + 1}`} href={p.link || '#'} target={p.link ? '_blank' : undefined} rel="noreferrer" key={p.title}><div className="project-tile-art"><div className="project-ui"><span>BRANDSPIRE / {String(p.category || 'PRODUCT').toUpperCase()}</span><Icon size={28} /><div className="ui-bars"><i /><i /><i /></div></div></div><div className="project-tile-copy"><div><small>{p.category}</small><h3>{p.title}</h3></div><ArrowUpRight size={20} /></div></a> })}</div></div></section>
+    <section className="section reviews-section">
+      <div className="container">
+        {(() => {
+          const total = reviewItems.length;
+          const average = total ? (reviewItems.reduce((sum, review) => sum + Number(review.rating || 0), 0) / total).toFixed(1) : '0.0';
+          return (
+            <>
+              <div className="reviews-head">
+                <div>
+                  <p className="eyebrow">CLIENT REVIEWS</p>
+                  <h2>Good work should feel good to work with.</h2>
+                  <p>See what clients have shared about working with BrandSpire, and add your own experience.</p>
                 </div>
-
-                <div className="code-body">
-
-                  <div className="code-line">
-                    <span>01</span>
-
-                    <div>
-                      <b>const</b> idea ={" "}
-                      <em>"your vision"</em>;
-                    </div>
+                <div className="rating-summary">
+                  <div className="rating-number">{average}</div>
+                  <div>
+                    <div className="stars"><ReviewStars rating={Math.round(Number(average))} /></div>
+                    <strong>{total} {total === 1 ? 'review' : 'reviews'}</strong>
+                    <span>Ratings are submitted by visitors through the review form.</span>
                   </div>
-
-                  <div className="code-line">
-                    <span>02</span>
-
-                    <div>
-                      <b>const</b> team ={" "}
-                      <em>"BrandSpire"</em>;
-                    </div>
-                  </div>
-
-                  <div className="code-line">
-                    <span>03</span>
-                    <div />
-                  </div>
-
-                  <div className="code-line">
-                    <span>04</span>
-
-                    <div>
-                      <b>function</b>{" "}
-                      buildProduct() {"{"}
-                    </div>
-                  </div>
-
-                  <div className="code-line indent">
-                    <span>05</span>
-
-                    <div>
-                      design(
-                      <em>"simple"</em>);
-                    </div>
-                  </div>
-
-                  <div className="code-line indent">
-                    <span>06</span>
-
-                    <div>
-                      develop(
-                      <em>"scalable"</em>);
-                    </div>
-                  </div>
-
-                  <div className="code-line indent">
-                    <span>07</span>
-
-                    <div>
-                      ship(
-                      <em>"fast"</em>);
-                    </div>
-                  </div>
-
-                  <div className="code-line">
-                    <span>08</span>
-
-                    <div>{"}"}</div>
-                  </div>
-
                 </div>
-
-                <div className="status-row">
-
-                  <span>
-                    <i />
-                    Production ready
-                  </span>
-
-                  <Rocket size={15} />
-
-                </div>
-
               </div>
 
-              <div className="floating-card floating-one">
-
-                <Code2 size={18} />
-
-                <span>
-                  <strong>
-                    Web Apps
-                  </strong>
-
-                  Modern & responsive
-                </span>
-
-              </div>
-
-              <div className="floating-card floating-two">
-
-                <Zap size={18} />
-
-                <span>
-                  <strong>
-                    Fast Delivery
-                  </strong>
-
-                  Idea to launch
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <div className="container hero-bottom-line">
-
-            <span>
-              WEB DEVELOPMENT
-            </span>
-
-            <i />
-
-            <span>
-              APP DEVELOPMENT
-            </span>
-
-            <i />
-
-            <span>
-              CUSTOM SOFTWARE
-            </span>
-
-            <i />
-
-            <span>
-              SAAS PRODUCTS
-            </span>
-
-          </div>
-
-        </section>
-
-        {/* ================= SERVICES ================= */}
-
-        <section
-          className="section services-section"
-          id="services"
-        >
-
-          <div className="container">
-
-            <div className="section-heading split-heading">
-
-              <div>
-
-                <p className="eyebrow">
-                  WHAT WE BUILD
-                </p>
-
-                <h2>
-                  Web, App & Software Solutions
-                  Built Around Your Business.
-                </h2>
-
-              </div>
-
-              <p>
-                From business websites and mobile applications to CRM,
-                POS, SaaS and automation tools, BrandSpire builds practical
-                digital products around your users and workflow.
-              </p>
-
-            </div>
-
-           <div className="services-grid">
-  {services.map(
-    (
-      {
-        icon: Icon,
-        title,
-        text,
-        link,
-      },
-      index
-    ) => (
-      <Link
-        to={link}
-        className="service-card"
-        key={title}
-      >
-        <div className="service-number">
-          0{index + 1}
-        </div>
-
-        <div className="icon-box">
-          <Icon size={22} />
-        </div>
-
-        <h3>{title}</h3>
-
-        <p>{text}</p>
-
-        <div className="service-learn-more">
-          Explore service
-          <ArrowRight size={15} />
-        </div>
-
-        <span className="card-line" />
-      </Link>
-    )
-  )}
-</div>
-
-           
-
-    </div>
-
-        </section>
-
-        {/* ================= ABOUT ================= */}
-
-        <section
-          className="section"
-          id="about"
-        >
-
-          <div className="container">
-
-            <div className="section-heading split-heading">
-
-              <div>
-
-                <p className="eyebrow">
-                  ABOUT BRANDSPIRE
-                </p>
-
-                <h2>
-                  Technology solutions built for
-                  real business needs.
-                </h2>
-
-              </div>
-
-              <p>
-                BrandSpire is a software and digital technology team
-                focused on building modern websites, mobile applications,
-                custom software, SaaS platforms and business systems.
-                We turn ideas and operational problems into practical,
-                scalable digital products.
-              </p>
-
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* ================= PROJECTS ================= */}
-
-        <section
-          className="section work-section"
-          id="work"
-        >
-
-          <div className="container">
-
-            <div className="section-heading work-heading">
-
-              <div>
-
-                <p className="eyebrow">
-                  SELECTED WORK
-                </p>
-
-                <h2>
-                  Products we’ve already
-                  brought to life.
-                </h2>
-
-              </div>
-
-              <p>
-                Explore some of BrandSpire’s
-                deployed work. Every card
-                below opens the live project.
-              </p>
-
-            </div>
-
-            <div className="project-list">
-
-              {projects.map(
-                ({
-                  number,
-                  title,
-                  category,
-                  description,
-                  link,
-                  tags,
-                  icon: Icon,
-                  previewClass,
-                  previewLabel,
-                  statusLabel,
-                }) => (
-                  <article
-                    className="project-card"
-                    key={title}
-                  >
-
-                    <div
-                      className={`project-preview ${previewClass}`}
-                    >
-
-                      <div className="preview-browser">
-
-                        <div className="preview-bar">
-
-                          <span />
-                          <span />
-                          <span />
-
-                          <small>
-                            {previewLabel}
-                          </small>
-
-                        </div>
-
-                        <div className="preview-content">
-
-                          <div className="preview-sidebar">
-
-                            <div className="preview-logo" />
-
-                            <i />
-                            <i />
-                            <i />
-                            <i />
-
-                          </div>
-
-                          <div className="preview-main">
-
-                            <div className="preview-head">
-                              <b />
-                              <span />
-                            </div>
-
-                            <div className="preview-stat-row">
-                              <i />
-                              <i />
-                              <i />
-                            </div>
-
-                            <div className="preview-chart">
-
-                              <svg
-                                viewBox="0 0 500 150"
-                                preserveAspectRatio="none"
-                              >
-                                <path
-                                  d="M0,125 C70,118 72,52 145,76 C210,98 220,25 295,52 C360,77 396,26 500,18"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="5"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      <div className="preview-badge">
-
-                        <Icon size={16} />
-
-                        {statusLabel}
-
-                      </div>
-
+              <div className="reviews-grid">
+                {reviewItems.map((review, index) => (
+                  <article className="review-card" key={review.id || `${review.name}-${index}`}>
+                    <div className="review-top">
+                      <ReviewStars rating={Number(review.rating || 0)} />
+                      <Quote size={24} />
                     </div>
-
-                    <div className="project-info">
-
-                      <div className="project-topline">
-
-                        <span>
-                          {number}
-                        </span>
-
-                        <p>
-                          {category}
-                        </p>
-
-                      </div>
-
-                      <h3>
-                        {title}
-                      </h3>
-
-                      <p className="project-description">
-                        {description}
-                      </p>
-
-                      <div className="tag-row">
-
-                        {tags.map(
-                          (tag) => (
-                            <span key={tag}>
-                              {tag}
-                            </span>
-                          )
-                        )}
-
-                      </div>
-
-                      <a
-                        href={link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="project-link"
-                      >
-                        Visit live project
-
-                        <ExternalLink
-                          size={16}
-                        />
-                      </a>
-
+                    <p>“{review.text}”</p>
+                    <div className="review-person">
+                      <div className="review-avatar">{String(review.name || 'Client').split(' ').map(x => x[0]).join('').slice(0, 2).toUpperCase()}</div>
+                      <div><strong>{review.name}</strong><span>{review.role || 'Client'}</span></div>
                     </div>
-
                   </article>
-                )
-              )}
-
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* ================= PROCESS ================= */}
-
-        <section
-          className="section process-section"
-          id="process"
-        >
-
-          <div className="container process-grid">
-
-            <div className="process-intro">
-
-              <p className="eyebrow">
-                HOW WE WORK
-              </p>
-
-              <h2>
-                From first idea to live
-                software.
-              </h2>
-
-              <p>
-                Clear communication, focused
-                product decisions and a build
-                process that keeps the outcome
-                practical.
-              </p>
-
-              <a
-                href="#contact"
-                className="text-button"
-              >
-                Tell us what you’re building
-
-                <ArrowRight
-                  size={17}
-                />
-              </a>
-
-            </div>
-
-            <div className="process-list">
-
-              {process.map(
-                ([
-                  number,
-                  title,
-                  text,
-                ]) => (
-                  <div
-                    className="process-item"
-                    key={number}
-                  >
-
-                    <span>
-                      {number}
-                    </span>
-
-                    <div>
-                      <h3>
-                        {title}
-                      </h3>
-
-                      <p>
-                        {text}
-                      </p>
-                    </div>
-
-                    <ChevronRight
-                      size={20}
-                    />
-
-                  </div>
-                )
-              )}
-
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* ================= CONTACT ================= */}
-
-        <section
-          className="section contact-section"
-          id="contact"
-        >
-
-          <div className="container contact-shell">
-
-            <div className="contact-copy">
-
-              <p className="eyebrow">
-                START A CONVERSATION
-              </p>
-
-              <h2>
-                Have an idea?
-                <br />
-
-                <span className="gradient-text">
-                  Let’s build it.
-                </span>
-              </h2>
-
-              <p>
-                Share what you want to create
-                and what problem you want to
-                solve. Your message will reach
-                the BrandSpire team through
-                the form.
-              </p>
-
-              <div className="contact-points">
-
-                <div>
-
-                  <span>
-                    <Mail size={18} />
-                  </span>
-
-                  <p>
-                    <strong>
-                      Email us
-                    </strong>
-
-                    <a href="mailto:contact@brandspire.tech">
-                      contact@brandspire.tech
-                    </a>
-                  </p>
-
-                </div>
-
-                <div>
-
-                  <span>
-                    <MapPin size={18} />
-                  </span>
-
-                  <p>
-                    <strong>
-                      Our location
-                    </strong>
-
-                    Ghaziabad, Uttar Pradesh
-                  </p>
-
-                </div>
-
-                <div>
-
-                  <span>
-                    <Rocket size={18} />
-                  </span>
-
-                  <p>
-                    <strong>
-                      From idea to deployment
-                    </strong>
-
-                    Web, apps & custom software
-                  </p>
-
-                </div>
-
+                ))}
               </div>
 
-            </div>
+              <div className="reviews-cta">
+                <span>Have a BrandSpire experience to share?</span>
+                <button className="review-open-button" type="button" onClick={() => setShowReviewForm((value) => !value)}>
+                  {showReviewForm ? 'Close review form' : 'Write a review'} <ArrowRight size={17} />
+                </button>
+              </div>
 
-            <ContactForm />
-
-          </div>
-
-        </section>
-
-      </main>
-
-      {/* ================= FOOTER ================= */}
-
-      <footer>
-
-        <div className="container footer-grid">
-
-          <div className="footer-brand">
-
-            <Logo />
-
-            <p>
-              Building useful software with
-              clarity, speed and craft.
-            </p>
-
-            <div className="footer-contact">
-
-              <a href="mailto:contact@brandspire.tech">
-
-                <Mail size={14} />
-
-              contact@brandspire.tech
-
-              </a>
-
-              <span>
-
-                <MapPin size={14} />
-
-                Ghaziabad, Uttar Pradesh
-
-              </span>
-
-            </div>
-
-          </div>
-
-          <div className="footer-links">
-
-            <a href="#services">
-              Services
-            </a>
-
-            <a href="#about">
-              About
-            </a>
-
-            <a href="#work">
-              Work
-            </a>
-
-            <a href="#process">
-              Process
-            </a>
-
-            <a href="#contact">
-              Contact
-            </a>
-
-          </div>
-
-          <p className="copyright">
-            © {new Date().getFullYear()}{" "}
-            BrandSpire. All rights reserved.
-          </p>
-
-        </div>
-
-      </footer>
-
-    </div>
-  );
+              {showReviewForm && (
+                <ReviewForm
+                  onClose={() => setShowReviewForm(false)}
+                  onSubmitted={(review) => {
+                    setReviewItems((current) => [review, ...current]);
+                    setShowReviewForm(false);
+                  }}
+                />
+              )}
+            </>
+          );
+        })()}
+      </div>
+    </section>
+    <section className="section process-new"><div className="container process-band"><div><p className="eyebrow">OUR PROCESS</p><h2>Simple process.<br /><span>Serious execution.</span></h2><Link className="primary-button" to="/contact">Start a project <ArrowRight size={17} /></Link></div><div className="process-steps">{[['01', 'Discover', 'Understand the problem.'], ['02', 'Design', 'Shape the experience.'], ['03', 'Build', 'Turn it into software.'], ['04', 'Launch', 'Ship and keep improving.']].map(([n, t, d]) => <div key={n}><b>{n}</b><div><h3>{t}</h3><p>{d}</p></div></div>)}</div></div></section>
+    <section className="cta-section"><div className="container cta-box"><p className="eyebrow">HAVE A PROJECT IN MIND?</p><h2>Let’s make something <span>useful.</span></h2><p>Tell us what you’re building. We’ll help turn the idea into a clear next step.</p><Link className="primary-button" to="/contact">Talk to BrandSpire <ArrowRight size={18} /></Link></div></section>
+  </SiteLayout>
 }
